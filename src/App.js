@@ -19,6 +19,7 @@ import {changeStartIndex} from "./redux/books-reducer";
 
 
 function App() {
+    console.log("App")
     const apiKey = "AIzaSyCl3cOILHXD6foLPSdKFV4l4Li5x5ILNcQ"
 
     const [book, setBook] = useState("")
@@ -31,19 +32,20 @@ function App() {
     const [bookIndex, setBookIndex] = useState(0)
 
     if (filter === ["Biography"]) {
-        setResult.filter(b => b.volumeInfo.categories === ["Biography"])
+      setResult(result.filter(b => b.volumeInfo.categories === ["Biography"]))
     }
+
     if (filter === ["History"]) {
-        setResult.filter(b => b.volumeInfo.categories === ["History"])
+        setResult(result.filter(b => b.volumeInfo.categories === ["History"]))
     }
     if (filter === ["Computers"]) {
-        setResult.filter(b => b.volumeInfo.categories === ["Computers"])
+        setResult(result.filter(b => b.volumeInfo.categories === ["Computers"]))
     }
     if (filter === ["Medical"]) {
-        setResult.filter(b => b.volumeInfo.categories === ["Medical"])
+        setResult(result.filter(b => b.volumeInfo.categories === ["Medical"]))
     }
     if (filter === ["Poetry"]) {
-        setResult.filter(b => b.volumeInfo.categories === ["Poetry"])
+        setResult(result.filter(b => b.volumeInfo.categories === ["Poetry"]))
     }
 
     /*    let pages = []
