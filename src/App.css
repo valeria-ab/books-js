@@ -1,0 +1,24 @@
+.App {
+  text-align: center;
+  min-height: 100vh;
+}
+
+a {
+  margin: 20px;
+}
+
+.container {
+  width: 80%;
+  text-align: center;
+margin-left: auto;
+margin-right: auto;
+}
+
+.selectedPage {
+font-weight: bold;
+  font-size: 22px;
+}
+
+.selectBlock {
+  width: 300px;
+}
