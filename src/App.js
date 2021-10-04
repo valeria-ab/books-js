@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import axios from "axios";
-import React, {useState} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     Button,
     Divider,
@@ -13,9 +13,9 @@ import {
     Select,
     TextField
 } from "@material-ui/core";
-import {Directions, Search} from "@material-ui/icons";
-import {useDispatch, useSelector} from "react-redux";
-import {changeStartIndex} from "./redux/books-reducer";
+import { Directions, Search } from "@material-ui/icons";
+import { useDispatch, useSelector } from "react-redux";
+import { changeStartIndex } from "./redux/books-reducer";
 
 
 function App() {
@@ -25,28 +25,13 @@ function App() {
     const [book, setBook] = useState("")
     const [result, setResult] = useState([])
     const [totalCount, setTotalCount] = useState(0)
-    const [filter, setFilter] = useState(["All"])
+    const [filter, setFilter] = useState("")
 
     //const [currentPage, setCurrentPage] = useState(1)
 
     const [bookIndex, setBookIndex] = useState(0)
 
-    if (filter === ["Biography"]) {
-      setResult(result.filter(b => b.volumeInfo.categories === ["Biography"]))
-    }
 
-    if (filter === ["History"]) {
-        setResult(result.filter(b => b.volumeInfo.categories === ["History"]))
-    }
-    if (filter === ["Computers"]) {
-        setResult(result.filter(b => b.volumeInfo.categories === ["Computers"]))
-    }
-    if (filter === ["Medical"]) {
-        setResult(result.filter(b => b.volumeInfo.categories === ["Medical"]))
-    }
-    if (filter === ["Poetry"]) {
-        setResult(result.filter(b => b.volumeInfo.categories === ["Poetry"]))
-    }
 
     /*    let pages = []
         let pagesCount = Math.ceil(totalCount / 30)
@@ -60,6 +45,9 @@ function App() {
 
     function handleChange(event) {
         setBook(event.currentTarget.value)
+    }
+    function handleFilterChange(event) {
+        setFilter(event.target.value)
     }
 
 
@@ -77,6 +65,46 @@ function App() {
                 console.log(totalCount)
             })
     }
+    // useEffect(()=>{
+    //     if (book === ["Biography"]) {
+    //         setResult(result.filter(b => {
+    //             debugger
+    //             return b.volumeInfo.categories["Biography"]
+    //         })
+    //         )
+    //     }
+
+    //     if (filter === ["History"]) {
+    //         setResult(result.filter(b => b.volumeInfo.categories === ["History"]))
+    //     }
+    //     if (filter === ["Computers"]) {
+    //         setResult(result.filter(b => b.volumeInfo.categories === ["Computers"]))
+    //     }
+    //     if (filter === ["Medical"]) {
+    //         setResult(result.filter(b => b.volumeInfo.categories === ["Medical"]))
+    //     }
+    //     if (filter === ["Poetry"]) {
+    //         setResult(result.filter(b => b.volumeInfo.categories === ["Poetry"]))
+    //     }
+    // },[book])
+
+    let filteredList = useMemo(() => {
+        let filterder = [...result]
+
+        filterder = filter && filter.length
+            ? filterder.filter(obj => {
+
+                    const data =  obj.volumeInfo.categories
+                    ?  obj.volumeInfo.categories.map(category => category.toLowerCase())
+                    : []
+                    return data.includes(filter.toLowerCase())
+            })
+            : filterder
+        return filterder
+
+
+    }, [result, filter])
+    console.log(filteredList)
 
     return (
         <div className="App">
@@ -85,19 +113,19 @@ function App() {
 
                 <Paper
                     component="form"
-                    sx={{p: '2px 4px', display: 'flex', alignItems: 'center', width: 400}}
+                    sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
                 >
                     <div>
 
                         <InputBase
                             variant="outlined"
-                            sx={{ml: 1, flex: 1}}
+                            sx={{ ml: 1, flex: 1 }}
                             placeholder="Введите название книги"
-                            inputProps={{'aria-label': 'search google maps'}}
+                            inputProps={{ 'aria-label': 'search google maps' }}
                             onChange={handleChange}
                         />
-                        <IconButton type="submit" sx={{p: '10px'}} aria-label="search">
-                            <Search onClick={handleSubmit}/>
+                        <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
+                            <Search onClick={handleSubmit} />
                         </IconButton>
                     </div>
 
@@ -110,39 +138,27 @@ function App() {
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
                                 label="all"
-                                onChange={handleChange}
+                                onChange={handleFilterChange}
 
                             >
-                                <MenuItem value={"All"}
-                                          onClick={() => {
-                                              setFilter(["All"])
-                                          }}
+                                <MenuItem value={""}
+                                 
                                 >All</MenuItem>
                                 <MenuItem value={"biography"}
-                                          onClick={() => {
-                                              setFilter(["Biography"])
-                                          }}>Biography</MenuItem>
+                                    >Biography</MenuItem>
                                 <MenuItem value={"history"}
-                                          onClick={() => {
-                                              setFilter(["History"])
-                                          }}
+                                   
                                 >History</MenuItem>
 
                                 <MenuItem value={"computers"}
-                                          onClick={() => {
-                                              setFilter(["Computers"])
-                                          }}
+                                   
                                 >Computers</MenuItem>
 
                                 <MenuItem value={"medical"}
-                                          onClick={() => {
-                                              setFilter(["Medical"])
-                                          }}
+                                   
                                 >Medical</MenuItem>
                                 <MenuItem value={"poetry"}
-                                          onClick={() => {
-                                              setFilter(["Poetry"])
-                                          }}
+                                    
                                 >Poetry</MenuItem>
 
                             </Select>
@@ -184,20 +200,25 @@ function App() {
                     </div>
 */}
 
-                    <div>{totalCount > 0 && totalCount}</div>
+                    {/* <div>{totalCount > 0 && totalCount}</div> */}
+                    <div>{filteredList.length}</div>
 
 
                     <div>
-                        {result.map(book => (
-                                <a target=" blank" href={book.volumeInfo.previewLink}>
-                                    <img src={book.volumeInfo.imageLinks.thumbnail} alt={book.title}/>
-                                </a>
-                            )
+                        {filteredList.map(book => {
+                            // return<div>{book.volumeInfo && book.volumeInfo.categories && book.volumeInfo.categories}</div>
+                            // debugger
+                            return <a target=" blank" href={""}>
+                                {
+                                    book.volumeInfo.imageLinks &&
+                                    <img src={book.volumeInfo.imageLinks.thumbnail} alt={book.title} />}
+                            </a>
+}
                         )}
                     </div>
                     <Button variant="contained"
-                            size="large"
-                            onClick={handleSubmit}
+                        size="large"
+                        onClick={handleSubmit}
                     >Load More
                     </Button>
 
